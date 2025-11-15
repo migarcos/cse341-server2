@@ -1,30 +1,15 @@
-require('dotenv').config();
-const { MongoClient } = require('mongodb');
+const express = require('express');
+const mongodb = require('./config/db');
 
-const config = {
-    uri : process.env.URI,
-    dbName : process.env.DBNAME || 'hardware'
-};
+const app = express();
+const port = process.env.PORT || 3000;
 
-async function testConnection() {
-    const client = new MongoClient(config.uri);
+app.use( express.json() );
 
-    console.log('🔄 Testing MongoDB connection...\n');
-    console.log(`🔗 Connecting to: ${config.uri.replace(/\/\/.*:.*@/, '//***:***@')}\n`); // Oculta credenciales
-
-    try {
-        await client.connect();
-        console.log(" Connected SUCCESSFULLY!");
-
-        const dbList = await client.db().admin().listDatabases();
-        console.log(" DATABASES: ");
-        dbList.databases.forEach( db => console.log(` - ${db.name}`));
-    } catch (err) {
-        console.error(" Connection FAILED ", err.message );
-    } finally {
-        await client.close();
-        console.log("Connection CLOSED");
+mongodb.initDB( (err) => {
+    if (err) {
+        console.log(err);
+    } else {
+        app.listen( port, () => { console.log(`DB is listening and Node eunning in port: ${port}`)})
     }
-}
-
-testConnection();
+}); 
