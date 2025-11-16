@@ -11,20 +11,18 @@ POST http://localhost:3000/processor HTTP/1.1
 Content-Type: application/json
 
 {
-    "manufacturer": "AMD",
-    "model": "Ryzen 7 5700X3D",
+    "manufacturer": "",
+    "model": "",
     "characteristics": {
-        "cores": 8,
-        "threads": 16,
-        "base_clock": "3.0 GHz",
-        "max_boost_clock": "4.1 GHz",
-        "cache": "96MB L3 Cache",
-        "socket": "AM4",
-        "integrated_graphics": "No",
-        "target_use": "Budget-friendly gaming for older systems"
+        "cores": 12,
+        "threads": 12,
+        "max_boost_clock": "3.8 GHz (dual core 4.2 GHz)",
+        "architecture": "ARM (System on a Chip)",
+        "integrated_graphics": "Yes (Adreno GPU)",
+        "target_use": "Windows laptops, exceptional battery life"
     },
-    "presentation_date": "2024-01-08",
-    "initial_price_usd": 249.00
+    "presentation_date": "2023-10-24",
+    "initial_price_usd": null
 }
 
 ### Update Processor by ID
