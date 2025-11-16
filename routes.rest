@@ -3,8 +3,14 @@
 ### Get ALl Processors
 GET http://localhost:3000/processor
 
+### Get ALl Mmemories
+GET http://localhost:3000/memory
+
 ### Get One Processor 6906a6d26cae19afc9bdcc56
-GET http://localhost:3000/processor/6918d62f61996217ee4c34d1
+GET http://localhost:3000/processor/69194f2b7f77f427b25a883c
+
+### Get One Memory 69197303ade79cb134a42a2c
+GET http://localhost:3000/memory/691a07b1464c3386df522449
 
 ### Create New Processor
 POST http://localhost:3000/processor HTTP/1.1
@@ -23,6 +29,25 @@ Content-Type: application/json
     },
     "presentation_date": "2023-10-24",
     "initial_price_usd": null
+}
+
+### Create New Memory
+POST http://localhost:3000/memory HTTP/1.1
+Content-Type: application/json
+
+{
+    "manufacturer": "Corsair",
+      "model": "Vengeance RGB Pro",
+      "characteristics": {
+        "capacity": "16GB (2x8GB Kit)",
+        "generation": "DDR4",
+        "speed": "3200 MHz",
+        "latency": "CL16",
+        "form_factor": "DIMM",
+        "features": "RGB lighting, aluminum heat spreader, Intel XMP support"
+      },
+      "presentation_date": "2018-06-01",
+      "initial_price_usd": 150.00
 }
 
 ### Update Processor by ID
