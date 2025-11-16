@@ -1,24 +1,18 @@
 require('dotenv').config();
 const { MongoClient } = require('mongodb');
 
-let client;
 let db;
 
-async function initDB() {
+const initDB = (callback) => {
     if (db) {
         console.log('DB already installed');
-        return db;
+        return callback( null, db);
     }
-    try {
-        client = new MongoClient(process.env.URI);
-
-        await client.connect();
-        db = client.db('hardware');
-        console.log("Connectiion succesful")
-        return db;
-    } catch (err) {
-        console.error(`Fail to connect to the DB ${err}`);
-    }
+    MongoClient.connect(process.env.URI)
+        .then( (client) => {
+            db = client;
+            callback( null, db);
+        }). catch ( (err) => { callback(err) });
 };
 
 const getDB = () => {
@@ -30,3 +24,19 @@ const getDB = () => {
 
 module.exports = { initDB, getDB };
 
+// async function initDB() {
+//     if (db) {
+//         console.log('DB already installed');
+//         return db;
+//     }
+//     try {
+//         client = new MongoClient(process.env.URI);
+
+//         await client.connect();
+//         db = client.db('hardware');
+//         console.log("Connectiion to HW DB succesful")
+//         return db;
+//     } catch (err) {
+//         console.error(`Fail to connect to the DB ${err}`);
+//     }
+// };
