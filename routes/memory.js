@@ -8,4 +8,8 @@ router.get('/memory/:id', memCtrler.getSingle);
 
 router.post('/memory', memCtrler.memoryCreate);
 
+router.delete('/memory/:id', memCtrler.deleteMemory);
+
+router.put('/memory/:id', memCtrler.updateMemory);
+
 module.exports = router;

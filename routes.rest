@@ -59,5 +59,17 @@ Content-Type: application/json
     "initial_price_usd": 449
 }
 
+### Update Memmory by ID
+PUT http://localhost:3000/memory/6919732aade79cb134a42a2d HTTP/1.1
+Content-Type: application/json
+
+{
+    "manufacturer": "CORSAIR",
+    "initial_price_usd": 160
+}
+
 ### Delete Processor 
 DELETE http://localhost:3000/processor/69192de56d609552d46ea257
+
+### Delete Memory by ID
+DELETE http://localhost:3000/memory/691a3703ca5543a3558ce3f2
