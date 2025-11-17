@@ -4,11 +4,11 @@ const { validationResult } = require("express-validator");
 const processorCtrler = require('../controllers/processorCtrl');
 const  { validateProcessor, validateUpdProcessor } = require('../middleware/validator');
 
-router.get('/processor', processorCtrler.getAll);
+router.get('/', processorCtrler.getAll);
 
-router.get('/processor/:id', processorCtrler.getSingle);
+router.get('/:id', processorCtrler.getSingle);
 
-router.post('/processor', validateProcessor, async (req, res) => {
+router.post('/', validateProcessor, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
@@ -16,7 +16,7 @@ router.post('/processor', validateProcessor, async (req, res) => {
     return processorCtrler.createProcessor(req, res);
 });
 
-router.put('/processor/:id', validateUpdProcessor, async (req, res) => {
+router.put('/:id', validateUpdProcessor, async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty() ) {
         return res.status(422).json({ errors: errors.array() });
@@ -24,6 +24,6 @@ router.put('/processor/:id', validateUpdProcessor, async (req, res) => {
     return processorCtrler.updateProcessor(req, res);
 });
 
-router.delete('/processor/:id', processorCtrler.deleteProcessor);
+router.delete('/:id', processorCtrler.deleteProcessor);
 
 module.exports =  router ;
