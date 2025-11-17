@@ -15,8 +15,8 @@ const getSingle = async (req, res) => {
     const itemId = new ObjectId( req.params.id );
     const result = await mongodb.getDB().db('hardware').collection('memory').find({_id: itemId});
         result.toArray().then( (device) => {
-        result.setHeader('Content-Type', 'application/json');
-        result.status(200).json(device);
+        res.setHeader('Content-Type', 'application/json');
+        res.status(200).json(device);
     });
 }
 
