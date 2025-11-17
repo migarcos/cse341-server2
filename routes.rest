@@ -60,12 +60,12 @@ Content-Type: application/json
 }
 
 ### Update Memmory by ID
-PUT http://localhost:3000/memory/6919732aade79cb134a42a2d HTTP/1.1
+PUT http://localhost:3000/memory/691a9a223b7c7d353a1a2872 HTTP/1.1
 Content-Type: application/json
 
 {
-    "manufacturer": "CORSAIR",
-    "initial_price_usd": 160
+    "manufacturer": "TEAMGROUP",
+    "initial_price_usd": 260
 }
 
 ### Delete Processor 
