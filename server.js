@@ -22,6 +22,7 @@ app.use( (req, res, next) => {
 app.use('/', require('./routes'));
 app.use('/', require('./routes/processor'));
 app.use('/', require('./routes/memory'));
+
 mongodb.initDB( (err) => {
     if (err) {
         console.log(err);

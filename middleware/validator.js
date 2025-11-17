@@ -50,4 +50,31 @@ const validateUpdProcessor = [
     .isString().withMessage('Socket must be a string')
 ];
 
-module.exports = { validateProcessor, validateUpdProcessor }
+const validMemoryCreate = [
+    body('manufacturer')
+    .escape().isLength({ min: 5 })
+    .notEmpty().withMessage('Manufacturer is required')
+    .isString().withMessage('Manufacturer must be a string'),
+
+  body('model')
+    .escape()
+    .notEmpty().withMessage('Model is required')
+    .isString().withMessage('Model must be a string')
+    .isLength({ min: 10 }),
+
+  body('characteristics.capacity')
+    .notEmpty().withMessage('Capacity is required'),
+
+  body('characteristics.generation')
+    .notEmpty().withMessage('Generation is required'),
+
+  body('characteristics.speed')
+    .notEmpty().withMessage('speed is required')
+    .isString().withMessage('speed must be a string'),
+  
+  body('characteristics.form_factor')
+    .notEmpty().withMessage('form_factor is required')
+    .isString().withMessage('form_factor must be a string')
+]
+
+module.exports = { validateProcessor, validateUpdProcessor, validMemoryCreate }
