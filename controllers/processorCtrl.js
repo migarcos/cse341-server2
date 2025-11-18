@@ -3,22 +3,38 @@ const ObjectId = require('mongodb').ObjectId;
 
 const getAll = async (req, res) => {
     // #swagger.tags = ['Processors']
-    const result = await mongodb.getDB().db('hardware').collection('processor').find();
-    result.toArray().then( (processor) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(processor);
-    });
+    try {
+            const result = await mongodb.getDB().db('hardware').collection('processor').find();
+            const processor = await result.toArray()
+            res.setHeader('Content-Type', 'application/json');
+            res.status(200).json(processor);
+    } catch (error) {
+        console.error(`Error ${error} fetching processors list `);
+        res.status(500).json({ error: 'Internal Server Error'});
+    }
 }
 
 const getSingle = async (req, res) => {
     // #swagger.tags = ['Processors']
-    const itemId =  new ObjectId(req.params.id);
-    console.log(itemId);
-    const result = await mongodb.getDB().db('hardware').collection('processor').find({_id: itemId});
-    result.toArray().then( (processor) => {
+    try {
+        const { id } = req.params;
+            if (!id || !ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid or missing ID' });
+        }
+        const itemId =  new ObjectId(req.params.id);
+        // console.log(itemId);
+        const result = await mongodb.getDB().db('hardware').collection('processor').find({_id: itemId});
+        const device = await result.toArray();
+
+        if (device.length === 0) {
+        return res.status(404).json({ error: 'Processor not found' });
+        }
         res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(processor);
-    });
+        res.status(200).json(device);        
+    } catch (error) {
+        console.error('Error fetching processor:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 }
 
 const createProcessor = async(req, res) => {

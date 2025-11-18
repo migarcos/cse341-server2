@@ -3,22 +3,44 @@ const ObjectId = require('mongodb').ObjectId;
 
 const getAll = async (req, res) => {
     // #swagger.tags = ['Memories']
-    const result = await mongodb.getDB().db('hardware').collection('memory').find();
-    result.toArray().then( (device) => {
+    try {
+        const result = await mongodb.getDB().db('hardware').collection('memory').find();
+        const processor = await result.toArray()
         res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(device);
-    });
+        res.status(200).json(memory);
+    } catch (error) {
+        console.error(`Error ${error} fetching memories list `);
+        res.status(500).json({ error: 'Internal Server Error'});
+    }
 }
 
 const getSingle = async (req, res) => {
-    // #swagger.tags = ['Memories']
-    const itemId = new ObjectId( req.params.id );
-    const result = await mongodb.getDB().db('hardware').collection('memory').find({_id: itemId});
-        result.toArray().then( (device) => {
-        res.setHeader('Content-Type', 'application/json');
-        res.status(200).json(device);
-    });
-}
+  // #swagger.tags = ['Memories']
+  try {
+    const { id } = req.params;
+    if (!id || !ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid or missing ID' });
+    }
+    const itemId = new ObjectId(req.params.id);
+    const result = await mongodb
+      .getDB()
+      .db('hardware')
+      .collection('memory')
+      .find({ _id: itemId });
+
+    const device = await result.toArray();
+
+    if (device.length === 0) {
+      return res.status(404).json({ error: 'Memory not found' });
+    }
+
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json(device);
+  } catch (error) {
+    console.error('Error fetching memory:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
 const memoryCreate = async (req, res) => {
     // #swagger.tags = ['Memories']
@@ -60,13 +82,24 @@ const deleteMemory = async (req, res) => {
         const response = await mongodb.getDB().db('hardware').collection('memory').deleteOne({ _id: deviceId});
 
         if (response.deleteCount > 0) {
-            res.status(200).json( { message: 'Memory ID record deleted SUCCESSFULLY'})
+            res.status(204).end();
         } else {
-            res.status(404).json({ error: 'Memory ID not found or already deleted'});
+            res.status(404).json({ 
+                error: 'Memory ID not found or already deleted',
+                message: 'The record with ID ${req.params.id} does not exist.'
+            });
         }
     } catch (err) {
         console.error('Error deleting Memory ID:', err);
-        res.status(500).json({ err: 'Internal server error' });
+
+        if (err.message && err.message.includes('Argument passed in must be a string of 12 bytes or a string of 24 hex characters')) {
+             return res.status(400).json({ error: 'Invalid ID format', message: 'The provided ID is not a valid MongoDB ObjectId.' });
+        }
+
+        res.status(500).json({
+             err: 'Internal server error',
+             details: err.message || 'An unexpected error occurred during the deletion process.'
+        });
     }
 }
 
