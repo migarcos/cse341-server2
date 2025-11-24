@@ -1,8 +1,25 @@
 const express = require('express');
 const mongodb = require('./config/db');
+const session = require('express-session');
+const passport = require('passport');
+require('dotenv').config();
+require('./config/passport');
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// Middleware to seesion
+app.use(session({
+  secret: 'CSE341SVR2', // complex key
+  resave: false,
+  saveUninitialized: false,
+  // session store could be added (as connect-mongo)
+}));
+// start passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
