@@ -20,7 +20,7 @@ router.get('/google/callback',
 );
 
 // 3. Rpute to close session
-app.get('/logout', (req, res, next) => {
+router.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) { return next(err); }
     res.redirect('/');

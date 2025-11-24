@@ -17,6 +17,7 @@
     "express": "^5.1.0",
     "express-validator": "^7.3.0",
     "mongodb": "^7.0.0",
+    "mongoose": "^9.0.0",
     "swagger-ui-express": "^5.0.1",
     "validatorjs": "^3.22.1"
   },

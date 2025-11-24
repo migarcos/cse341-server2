@@ -1,29 +1,42 @@
 require('dotenv').config();
-const { MongoClient } = require('mongodb');
+// const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
 
-let _db;
-
-const initDB = (callback) => {
-    if (_db) {
-        console.log('DB already installed');
-        return callback( null, _db);
+const connectDB = async (callback) => {
+    try {
+        await mongoose.connect(process.env.URI);
+        console.log(`MongoDB connected successfully!`);
+        callback(null); 
+    } catch (err) {
+        console.error(`Error connecting to MongoDB: ${err.message}`);
+        callback(err); 
+        process.exit(1);
     }
-    MongoClient.connect(process.env.URI)
-        .then( (client) => {
-            // db = client;
-            _db = client.db(process.env.DB_NAME || 'cse341-server2');
-            callback( null, _db);
-        }). catch ( (err) => { callback(err) });
 };
 
-const getDB = () => {
-    if (!_db) {
-        throw Error('Database not initialized!');        
-    }
-    return _db;
-};
+// let _db;
 
-module.exports = { initDB, getDB };
+// const initDB = (callback) => {
+//     if (_db) {
+//         console.log('DB already installed');
+//         return callback( null, _db);
+//     }
+//     MongoClient.connect(process.env.URI)
+//         .then( (client) => {
+//             // db = client;
+//             _db = client.db(process.env.DB_NAME || 'cse341-server2');
+//             callback( null, _db);
+//         }). catch ( (err) => { callback(err) });
+// };
+
+// const getDB = () => {
+//     if (!_db) {
+//         throw Error('Database not initialized!');        
+//     }
+//     return _db;
+// };
+
+module.exports = { initDB: connectDB, getDB: () => mongoose.connection.db };
 
 // async function initDB() {
 //     if (db) {
