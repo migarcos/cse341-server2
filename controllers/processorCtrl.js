@@ -56,42 +56,26 @@ const createProcessor = async(req, res) => {
 };
 
 const updateProcessor = async (req, res) => {
-  // #swagger.tags = ['Processors']
-  try {
-    const itemId = new ObjectId(req.params.id);
+     // #swagger.tags = ['Processors']
+    try {
+        const { id } = req.params; 
 
-    const updateFields = {};
+        const response = await Processor.findByIdAndUpdate(id, req.body, { 
+        new: true,           
+        runValidators: true 
+    });
 
-    if (req.body.manufacturer) updateFields.manufacturer = req.body.manufacturer;
-    if (req.body.model) updateFields.model = req.body.model;
-    if (req.body.presentation_date) updateFields.presentation_date = req.body.presentation_date;
-    if (req.body.initial_price_usd) updateFields.initial_price_usd = req.body.initial_price_usd;
+    if (!response) {
+        return res.status(404).json({ error: 'Processor not found' });
+    } 
 
-    if (req.body.characteristics) {
-        updateFields.characteristics = {};
-        const c = req.body.characteristics;
-        if (c.cores) updateFields.characteristics.cores = c.cores;
-        if (c.threads) updateFields.characteristics.threads = c.threads;
-        if (c.base_clock) updateFields.characteristics.base_clock = c.base_clock;
-        if (c.max_boost_clock) updateFields.characteristics.max_boost_clock = c.max_boost_clock;
-        if (c.cache) updateFields.characteristics.cache = c.cache;
-        if (c.socket) updateFields.characteristics.socket = c.socket;
-        if (c.integrated_graphics) updateFields.characteristics.integrated_graphics = c.integrated_graphics;
-        if (c.target_use) updateFields.characteristics.target_use = c.target_use;
+    res.status(200).json({ message: 'Processor updated successfully', processor: response });
+    } catch (error) {
+        console.error('Error updating processor:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-
-    const response = await mongodb.getDB().db('hardware').collection('processor').updateOne({ _id: itemId }, { $set: updateFields });
-
-    if (response.modifiedCount > 0) {
-        res.status(200).json({ message: 'Processor updated successfully' });
-    } else {
-        res.status(404).json({ error: 'Processor not found or no changes applied' });
-    }
-  } catch (error) {
-    console.error('Error updating processor:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
 };
+
 
 const replaceProcessor = async(req, res) => {
     // #swagger.tags = ['Processors']
@@ -131,17 +115,23 @@ const replaceProcessor = async(req, res) => {
 const deleteProcessor = async(req, res) => {
     // #swagger.tags = ['Processors']
     try {
-        const itemId = new ObjectId(req.params.id);
+        const { id } = req.params;  
+        
+        const response = await Processor.findByIdAndDelete(id);
 
-        const response = await mongodb.getDB().db('hardware').collection('processor').deleteOne({ _id: itemId });
-
-        if (response.deletedCount > 0) {
-            res.status(204).json({ message: 'Processor deleted successfully' }); 
-        } else {
-            res.status(404).json({ error: 'Processor not found or already deleted' });
-        }
+        if (!response) {
+            return res.status(404).json({ error: 'Processor not found or already deleted' });
+        } 
+        
+        res.status(204).send();
+        
     } catch (error) {
         console.error('Error deleting Processor:', error);
+
+        if (error.name === 'CastError') {
+            return res.status(400).json({ error: 'Invalid Processor ID format.' });
+        }
+        
         res.status(500).json({ error: 'Internal server error' });
     }
 };
@@ -220,6 +210,62 @@ module.exports = {
 //         }
 //     } catch (error) {
 //         console.error('Error creating device:', error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// };
+
+// const updateProcessor = async (req, res) => {
+//   // #swagger.tags = ['Processors']
+//   try {
+//     const itemId = new ObjectId(req.params.id);
+
+//     const updateFields = {};
+
+//     if (req.body.manufacturer) updateFields.manufacturer = req.body.manufacturer;
+//     if (req.body.model) updateFields.model = req.body.model;
+//     if (req.body.presentation_date) updateFields.presentation_date = req.body.presentation_date;
+//     if (req.body.initial_price_usd) updateFields.initial_price_usd = req.body.initial_price_usd;
+
+//     if (req.body.characteristics) {
+//         updateFields.characteristics = {};
+//         const c = req.body.characteristics;
+//         if (c.cores) updateFields.characteristics.cores = c.cores;
+//         if (c.threads) updateFields.characteristics.threads = c.threads;
+//         if (c.base_clock) updateFields.characteristics.base_clock = c.base_clock;
+//         if (c.max_boost_clock) updateFields.characteristics.max_boost_clock = c.max_boost_clock;
+//         if (c.cache) updateFields.characteristics.cache = c.cache;
+//         if (c.socket) updateFields.characteristics.socket = c.socket;
+//         if (c.integrated_graphics) updateFields.characteristics.integrated_graphics = c.integrated_graphics;
+//         if (c.target_use) updateFields.characteristics.target_use = c.target_use;
+//     }
+
+//     const response = await mongodb.getDB().db('hardware').collection('processor').updateOne({ _id: itemId }, { $set: updateFields });
+
+//     if (response.modifiedCount > 0) {
+//         res.status(200).json({ message: 'Processor updated successfully' });
+//     } else {
+//         res.status(404).json({ error: 'Processor not found or no changes applied' });
+//     }
+//   } catch (error) {
+//     console.error('Error updating processor:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
+
+// const deleteProcessor = async(req, res) => {
+//     // #swagger.tags = ['Processors']
+//     try {
+//         const itemId = new ObjectId(req.params.id);
+
+//         const response = await mongodb.getDB().db('hardware').collection('processor').deleteOne({ _id: itemId });
+
+//         if (response.deletedCount > 0) {
+//             res.status(204).json({ message: 'Processor deleted successfully' }); 
+//         } else {
+//             res.status(404).json({ error: 'Processor not found or already deleted' });
+//         }
+//     } catch (error) {
+//         console.error('Error deleting Processor:', error);
 //         res.status(500).json({ error: 'Internal server error' });
 //     }
 // };
