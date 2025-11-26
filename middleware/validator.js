@@ -47,7 +47,6 @@ const validateProcessor = [
     }
 ];
 
-
 const validateUpdProcessor = [
     body('manufacturer')
         .optional({ checkFalsy: true }).trim().escape()
@@ -84,63 +83,102 @@ const validateUpdProcessor = [
     }
 ];
 
-
 const validMemoryCreate = [
     body('manufacturer')
-    .escape().isLength({ min: 5 })
-    .notEmpty().withMessage('Manufacturer is required')
-    .isString().withMessage('Manufacturer must be a string'),
+        .exists().withMessage('Manufacturer is required.')
+        .trim().escape()
+        .isString().withMessage('Manufacturer must be a string')
+        .isLength({ min: 5 }).withMessage('Manufacturer must be at least 5 characters long.'),
 
-  body('model')
-    .escape()
-    .notEmpty().withMessage('Model is required')
-    .isString().withMessage('Model must be a string')
-    .isLength({ min: 10 }),
+    body('model')
+        .exists().withMessage('Model is required.')
+        .trim().escape()
+        .isString().withMessage('Model must be a string')
+        .isLength({ min: 10 }).withMessage('Model must be at least 10 characters long.'),
 
-  body('characteristics.capacity')
-    .notEmpty().withMessage('Capacity is required'),
+    
+    body('characteristics.capacity')
+        .exists().withMessage('Capacity is required.'),
 
-  body('characteristics.generation')
-    .notEmpty().withMessage('Generation is required'),
+    body('characteristics.generation')
+        .exists().withMessage('Generation is required.'),
 
-  body('characteristics.speed')
-    .notEmpty().withMessage('speed is required')
-    .isString().withMessage('speed must be a string'),
-  
-  body('characteristics.form_factor')
-    .notEmpty().withMessage('form_factor is required')
-    .isString().withMessage('form_factor must be a string')
-]
+    body('characteristics.speed')
+        .exists().withMessage('Speed is required.')
+        .isString().withMessage('Speed must be a string'),
+    
+    body('characteristics.form_factor')
+        .exists().withMessage('Form_factor is required.')
+        .isString().withMessage('Form_factor must be a string'),
+
+    body('presentation_date')
+        .optional()
+        .isISO8601().withMessage('Presentation date must be a valid date format (YYYY-MM-DD)')
+        .toDate(),
+    
+    body('initial_price_usd')
+        .optional()
+        .isFloat({ min: 0 }).withMessage('Initial price must be a non-negative number.'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ 
+                validationErrors: errors.array({ onlyFirstError: true }),
+                message: 'Validation failed for the request data.'
+            });
+        }
+        next();
+    }
+];
 
 const validMemoryUpd = [
+
     body('manufacturer')
-    .optional().escape().isLength({ min: 5 })
-    .notEmpty().withMessage('Manufacturer is required')
-    .isString().withMessage('Manufacturer must be a string'),
+        .optional({ checkFalsy: true }).trim().escape()
+        .isString().withMessage('Manufacturer must be a string')
+        .isLength({ min: 5 }).withMessage('Manufacturer must be at least 5 characters long.'),
 
-  body('model')
-    .optional().escape()
-    .notEmpty().withMessage('Model is required')
-    .isString().withMessage('Model must be a string')
-    .isLength({ min: 10 }),
+    body('model')
+        .optional({ checkFalsy: true }).trim().escape()
+        .isString().withMessage('Model must be a string')
+        .isLength({ min: 10 }).withMessage('Model must be at least 10 characters long.'),
 
-  body('characteristics.capacity')
-    .optional()
-    .notEmpty().withMessage('Capacity is required'),
+    body('characteristics.capacity')
+        .optional({ checkFalsy: true }),
 
-  body('characteristics.generation')
-    .optional()
-    .notEmpty().withMessage('Generation is required'),
+    body('characteristics.generation')
+        .optional({ checkFalsy: true }),
 
-  body('characteristics.speed')
-    .optional()
-    .notEmpty().withMessage('speed is required')
-    .isString().withMessage('speed must be a string'),
-  
-  body('characteristics.form_factor')
-    .optional()
-    .notEmpty().withMessage('form_factor is required')
-    .isString().withMessage('form_factor must be a string')
+    body('characteristics.speed')
+        .optional({ checkFalsy: true })
+        .isString().withMessage('Speed must be a string'),
+    
+    body('characteristics.form_factor')
+        .optional({ checkFalsy: true })
+        .isString().withMessage('Form_factor must be a string'),
+
+    body('presentation_date')
+        .optional({ checkFalsy: true })
+        .isISO8601().withMessage('Presentation date must be a valid date format (YYYY-MM-DD)')
+        .toDate(),
+
+    body('initial_price_usd')
+        .optional({ checkFalsy: true })
+        .isFloat({ min: 0 }).withMessage('Initial price must be a non-negative number.'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+        
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ 
+                validationErrors: errors.array({ onlyFirstError: true }),
+                message: 'Validation failed for the request data.'
+            });
+        }
+        next();
+    }
 ];
 
 module.exports = { validateProcessor, validateUpdProcessor, validMemoryCreate, validMemoryUpd }
@@ -193,4 +231,62 @@ module.exports = { validateProcessor, validateUpdProcessor, validMemoryCreate, v
 //   body('characteristics.socket')
 //     .optional().notEmpty().withMessage('Socket is required')
 //     .isString().withMessage('Socket must be a string')
+// ];
+
+// const validMemoryCreate = [
+//     body('manufacturer')
+//     .escape().isLength({ min: 5 })
+//     .notEmpty().withMessage('Manufacturer is required')
+//     .isString().withMessage('Manufacturer must be a string'),
+
+//   body('model')
+//     .escape()
+//     .notEmpty().withMessage('Model is required')
+//     .isString().withMessage('Model must be a string')
+//     .isLength({ min: 10 }),
+
+//   body('characteristics.capacity')
+//     .notEmpty().withMessage('Capacity is required'),
+
+//   body('characteristics.generation')
+//     .notEmpty().withMessage('Generation is required'),
+
+//   body('characteristics.speed')
+//     .notEmpty().withMessage('speed is required')
+//     .isString().withMessage('speed must be a string'),
+  
+//   body('characteristics.form_factor')
+//     .notEmpty().withMessage('form_factor is required')
+//     .isString().withMessage('form_factor must be a string')
+// ]
+
+// const validMemoryUpd = [
+//     body('manufacturer')
+//     .optional().escape().isLength({ min: 5 })
+//     .notEmpty().withMessage('Manufacturer is required')
+//     .isString().withMessage('Manufacturer must be a string'),
+
+//   body('model')
+//     .optional().escape()
+//     .notEmpty().withMessage('Model is required')
+//     .isString().withMessage('Model must be a string')
+//     .isLength({ min: 10 }),
+
+//   body('characteristics.capacity')
+//     .optional()
+//     .notEmpty().withMessage('Capacity is required'),
+
+//   body('characteristics.generation')
+//     .optional()
+//     .notEmpty().withMessage('Generation is required'),
+
+//   body('characteristics.speed')
+//     .optional()
+//     .notEmpty().withMessage('speed is required')
+//     .isString().withMessage('speed must be a string'),
+  
+//   body('characteristics.form_factor')
+//     .optional()
+//     .notEmpty().withMessage('form_factor is required')
+//     .isString().withMessage('form_factor must be a string')
 // ];
