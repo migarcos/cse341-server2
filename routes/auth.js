@@ -23,8 +23,14 @@ router.get('/google/callback',
 router.get('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) { return next(err); }
-    res.redirect('/');
+    
+    req.session.destroy( (err) => {
+      if (err) {
+        console.error('Error destruction error: ', err);
+      }
+      res.redirect('/');
+    });
   });
-})
+});
 
 module.exports = router;

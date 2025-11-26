@@ -14,6 +14,18 @@ const connectDB = async (callback) => {
     }
 };
 
+module.exports = { 
+    initDB: connectDB, 
+    getDB: () => mongoose.connection.db
+};
+
+// getDB: () => {
+//         if (mongoose.connection.readyState === 1) {
+//             return mongoose.connection.db;
+//         }
+//         throw new Error('Database not connected!');
+//     }
+
 // let _db;
 
 // const initDB = (callback) => {
@@ -36,7 +48,7 @@ const connectDB = async (callback) => {
 //     return _db;
 // };
 
-module.exports = { initDB: connectDB, getDB: () => mongoose.connection.db };
+
 
 // async function initDB() {
 //     if (db) {
