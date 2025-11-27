@@ -5,7 +5,8 @@ const processorCtrler = require('../controllers/processorCtrl');
 const  { validateProcessor, validateUpdProcessor } = require('../middleware/validator');
 const { ensureAuthenticated } = require('../middleware/auth');
 
-router.get('/', ensureAuthenticated, processorCtrler.getAll);
+router.get('/', processorCtrler.getAll);
+// router.get('/', ensureAuthenticated, processorCtrler.getAll);
 
 router.get('/:id', ensureAuthenticated, processorCtrler.getSingle);
 
