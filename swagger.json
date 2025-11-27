@@ -11,11 +11,22 @@
     "http",
     "https"
   ],
+  "securityDefinitions": {
+    "googleOAuth": {
+      "type": "oauth2",
+      "authorizationUrl": "https://cse341-server2.onrender.com/auth/google",
+      "flow": "implicit",
+      "scopes": {
+        "profile": "Basic access to user profilr.",
+        "email": "access to email user address."
+      }
+    }
+  },
   "paths": {
-    "/processor": {
+    "/": {
       "get": {
         "tags": [
-          "Processors"
+          "Memories"
         ],
         "description": "",
         "produces": [
@@ -24,46 +35,29 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "post": {
         "tags": [
-          "Processors"
+          "Memories"
         ],
         "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "manufacturer": {
-                  "example": "any"
-                },
-                "model": {
-                  "example": "any"
-                },
-                "characteristics": {
-                  "example": "any"
-                },
-                "presentation_date": {
-                  "example": "any"
-                },
-                "initial_price_usd": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
         "responses": {
           "201": {
             "description": "Created"
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "409": {
+            "description": "Conflict"
           },
           "422": {
             "description": "Unprocessable Entity"
@@ -74,10 +68,10 @@
         }
       }
     },
-    "/processor/{id}": {
+    "/{id}": {
       "get": {
         "tags": [
-          "Processors"
+          "Memories"
         ],
         "description": "",
         "produces": [
@@ -94,12 +88,24 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       },
       "put": {
         "tags": [
-          "Processors"
+          "Memories"
         ],
         "description": "",
         "parameters": [
@@ -108,35 +114,17 @@
             "in": "path",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "manufacturer": {
-                  "example": "any"
-                },
-                "model": {
-                  "example": "any"
-                },
-                "presentation_date": {
-                  "example": "any"
-                },
-                "initial_price_usd": {
-                  "example": "any"
-                },
-                "characteristics": {
-                  "example": "any"
-                }
-              }
-            }
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -151,7 +139,7 @@
       },
       "delete": {
         "tags": [
-          "Processors"
+          "Memories"
         ],
         "description": "",
         "parameters": [
@@ -166,6 +154,12 @@
           "204": {
             "description": "No Content"
           },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
           "404": {
             "description": "Not Found"
           },
@@ -175,156 +169,38 @@
         }
       }
     },
-    "/memory": {
+    "/google": {
       "get": {
         "tags": [
-          "Memories"
+          "Auth - Google OAuth"
         ],
-        "description": "",
-        "produces": [
-          "application/json"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Memories"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "manufacturer": {
-                  "example": "any"
-                },
-                "model": {
-                  "example": "any"
-                },
-                "characteristics": {
-                  "example": "any"
-                },
-                "presentation_date": {
-                  "example": "any"
-                },
-                "initial_price_usd": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/memory/{id}": {
-      "get": {
-        "tags": [
-          "Memories"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "summary": "Begin auth with Google (OAuth 2.0)",
+        "description": "consent by User redirection.",
         "responses": {
           "default": {
             "description": ""
           }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Memories"
-        ],
-        "description": "",
-        "parameters": [
+        },
+        "security": [
           {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
+            "googleOAuth": [
+              "profile",
+              "email"
+            ]
           }
+        ]
+      }
+    },
+    "/logout": {
+      "get": {
+        "tags": [
+          "Auth - Google OAuth"
         ],
+        "summary": "Cerrar sesión",
+        "description": "Cierra la sesión del usuario (destruye la sesión de Express) y redirige a la página principal.",
         "responses": {
           "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Memories"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "manufacturer": {
-                  "example": "any"
-                },
-                "model": {
-                  "example": "any"
-                },
-                "presentation_date": {
-                  "example": "any"
-                },
-                "initial_price_usd": {
-                  "example": "any"
-                },
-                "characteristics": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
+            "description": "Redirecciona a /"
           }
         }
       }
