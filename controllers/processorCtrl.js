@@ -28,7 +28,7 @@ const getSingle = async (req, res) => {
         res.setHeader('Content-Type', 'application/json');
         res.status(200).json(device);
     } catch (error) {
-        // Este catch ahora también atrapará IDs malformados que Mongoose no pueda convertir
+        
         console.error('Error fetching processor:', error); 
         res.status(500).json({ error: 'Internal server error' });
     }
@@ -36,14 +36,23 @@ const getSingle = async (req, res) => {
 
 const createProcessor = async(req, res) => {
     // #swagger.tags = ['Processors']
+    /* #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'This is an example (change only the fields you need it)',
+            required: true,
+            schema: {
+                manufacturer: "",
+                model: "",
+                characteristics: {
+                    cores: 0,
+                    threads: 0,
+                    socket: ""
+                },
+                initial_price_usd: 0.00
+        }
+    } */
     try {
-        const newProcessor = new Processor({
-            manufacturer: req.body.manufacturer,
-            model: req.body.model,
-            characteristics: req.body.characteristics, 
-            presentation_date: req.body.presentation_date,
-            initial_price_usd: req.body.initial_price_usd
-        });
+        const newProcessor = new Processor(req.body);
 
         const response = await newProcessor.save(); 
 
@@ -57,6 +66,21 @@ const createProcessor = async(req, res) => {
 
 const updateProcessor = async (req, res) => {
      // #swagger.tags = ['Processors']
+     /* #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'This is an example (change only the fields you need it)',
+            required: true,
+            schema: {
+                manufacturer: "",
+                model: "",
+                characteristics: {
+                    cores: 0,
+                    threads: 0,
+                    socket: ""
+                },
+                initial_price_usd: 0.00
+        }
+    } */
     try {
         const { id } = req.params; 
 
@@ -72,6 +96,12 @@ const updateProcessor = async (req, res) => {
     res.status(200).json({ message: 'Processor updated successfully', processor: response });
     } catch (error) {
         console.error('Error updating processor:', error);
+        if (error.name === 'CastError') {
+             return res.status(400).json({ error: 'Invalid ID format', message: 'The provided ID is not a valid MongoDB ObjectId.' });
+        }
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ error: 'Validation Failed', message: error.message });
+        }
         res.status(500).json({ error: 'Internal server error' });
     }
 };

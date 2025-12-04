@@ -9,7 +9,7 @@ router.get('/google',
     #swagger.security = [{"googleOAuth": ["profile", "email"]}] 
     */
   passport.authenticate('google', {
-    scope: ['profile', 'email'] // Ask the onfo needed
+    scope: ['profile', 'email'] 
   })
 );
 
@@ -28,7 +28,6 @@ router.get('/google/callback',
   }
 );
 
-// 3. Rpute to close session
 router.get('/logout', (req, res, next) => {
   /* #swagger.tags = ['Auth - Google OAuth']
     #swagger.summary = 'Cerrar sesión'

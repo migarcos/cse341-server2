@@ -18,13 +18,8 @@ app.use(session({
 // start passport
 app.use(passport.initialize());
 app.use(passport.session());
-
-
-
-const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./swagger.json');
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use( express.json() );
+
 app.use( (req, res, next) => { 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader(
@@ -36,9 +31,14 @@ app.use( (req, res, next) => {
     );
     next();
 } );
+
 app.use('/', require('./routes'));
 // app.use('/', require('./routes/processor'));
 // app.use('/', require('./routes/memory'));
+
+// const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger.json');
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 mongodb.initDB( (err) => {
     if (err) {

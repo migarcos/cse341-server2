@@ -6,10 +6,9 @@ const Memory = require('../models/Memory');
 const getAll = async (req, res) => {
     // #swagger.tags = ['Memories']
     try {
-        // Mongoose: Usar .find() en el modelo
+        
         const memories = await Memory.find({}); 
         
-        // Corregido: Usar 'memories' en lugar de 'processor'
         res.setHeader('Content-Type', 'application/json');
         res.status(200).json(memories);
     } catch (error) {
@@ -23,7 +22,6 @@ const getSingle = async (req, res) => {
     try {
         const { id } = req.params;
         
-        // Mongoose: findById busca y maneja la conversión del ID
         const device = await Memory.findById(id); 
 
         if (!device) {
@@ -44,20 +42,34 @@ const getSingle = async (req, res) => {
 
 const memoryCreate = async (req, res) => {
     // #swagger.tags = ['Memories']
+    /* #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'New memory module info',
+            required: true,
+            schema: {
+                manufacturer: "",
+                model: "",
+                characteristics: {
+                    capacity: "",
+                    generation: "",
+                    speed: "",
+                    latency: "",
+                    form_factor: "",
+                    features: ""
+                },
+                presentation_date: "2023-01-01",
+                initial_price_usd: 50.00
+            }
+    } */
     try {
-        // Mongoose: Crear y guardar el documento directamente, 
-        // y el Schema valida la estructura anidada (characteristics)
         const newMemory = new Memory(req.body);
 
         const response = await newMemory.save(); 
-
-        // En caso de éxito, Mongoose devuelve el objeto completo creado
         res.status(201).json(response); 
 
     } catch (error) {
         console.error('Error creating device:', error);
         
-        // Manejo de errores de validación y unicidad de Mongoose
         if (error.code === 11000) {
             return res.status(409).json({ 
                 error: 'Conflict', 
@@ -80,23 +92,19 @@ const deleteMemory = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Mongoose: findByIdAndDelete busca y elimina
         const response = await Memory.findByIdAndDelete(id);
 
         if (!response) {
-            // Mongoose devuelve null si no encuentra el documento
             return res.status(404).json({ 
                 error: 'Memory ID not found or already deleted',
                 message: `The record with ID ${id} does not exist.`
             });
         }
         
-        // Éxito: 204 No Content
         res.status(204).send();
     } catch (err) {
         console.error('Error deleting Memory ID:', err);
 
-        // CastError para IDs inválidos
         if (err.name === 'CastError') {
              return res.status(400).json({ error: 'Invalid ID format', message: 'The provided ID is not a valid MongoDB ObjectId.' });
         }
@@ -110,13 +118,29 @@ const deleteMemory = async (req, res) => {
 
 const updateMemory = async (req, res) => {
     // #swagger.tags = ['Memories']
+    /* #swagger.parameters['body'] = {
+            in: 'body',
+            description: 'Update only the fields you need it',
+            required: true,
+            schema: {
+                manufacturer: "",
+                model: "",
+                characteristics: {
+                    capacity: "",
+                    generation: "",
+                    speed: "",
+                    latency: "",
+                    form_factor: ""
+                },
+                initial_price_usd: 0.00
+            }
+    } */
     try {
         const { id } = req.params;
 
-        // Mongoose: findByIdAndUpdate aplica $set con req.body
         const response = await Memory.findByIdAndUpdate(id, req.body, { 
-            new: true, // Devuelve el documento actualizado
-            runValidators: true // Ejecuta las validaciones del Schema
+            new: true, 
+            runValidators: true 
         });
 
         if (!response) {
@@ -127,7 +151,7 @@ const updateMemory = async (req, res) => {
 
     } catch (error) {
         console.error('Error updating Memory:', error);
-        // Manejo de errores de validación y CastError para IDs inválidos
+        
          if (error.name === 'CastError') {
              return res.status(400).json({ error: 'Invalid ID format', message: 'The provided ID is not a valid MongoDB ObjectId.' });
         }
@@ -206,7 +230,8 @@ module.exports = {
 //             initial_price_usd: req.body.initial_price_usd
 //         };
 
-//         const response = await mongodb.getDB().db('hardware').collection('memory').insertOne( memorie );
+//         const response = await mongodb.getDB().db('hardware')
+//                              .collection('memory').insertOne( memorie );
 
 //         if (response.acknowledged) {
 //             res.status(201).json({ message: 'Mmeory created successfully', id: response.insertedId });

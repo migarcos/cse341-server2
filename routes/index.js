@@ -50,4 +50,6 @@ router.use('/auth', require('./auth'));
 router.use('/processor', require('./processor'));
 router.use('/memory', require('./memory'));
 
+router.use("/", require("./swagger"));
+
 module.exports = router;
